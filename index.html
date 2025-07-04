@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5000km下的最美中国——318公路游览</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 字体图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 主标题 -->
+    <header class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-route"></i> 5000km下的最美中国</h1>
+            <p>318公路游览 · 从东海之滨到世界屋脊的壮美征程</p>
+            <p class="story-intro">这是一条神奇的道路，它横贯东西，连接海洋与雪山，穿越五千年文明与现代奇迹。从上海的繁华都市到拉萨的圣洁天空，每一公里都写满了故事，每一个转弯都隐藏着惊喜。</p>
+        </div>
+        <div class="header-centerpiece">
+            <div class="image-gallery">
+                <img src="zhaopian/洞庭湖/1.png" alt="318国道风光：洞庭湖" class="gallery-image">
+                <img src="zhaopian/怒江七十二拐/b3858dd3-bea4-4067-bcb9-a1ab1632ebf9.png" alt="318国道风光：公路奇观" class="gallery-image">
+                <img src="zhaopian/四姑娘山/03aca0c1-43c7-45a5-9faa-c75865742133.png" alt="318国道风光：蜀山皇后" class="gallery-image">
+                <img src="zhaopian/纳木错/0e8cbb8e-dce3-4f39-8567-2f981c003192.png" alt="318国道风光：天湖圣境" class="gallery-image">
+            </div>
+        </div>
+        <div class="header-right-panel">
+            <p class="story-quote">"此生必驾318，不为到达，只为沿途的风景与故事"</p>
+            <button class="header-toggle" id="headerToggle">
+                <i class="fas fa-chevron-up"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-map-marked-alt"></i> 最美中国·景点探索</h3>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索景点...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="route-progress">
+                <h4>征程进度</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text" id="progressText">0% 完成</p>
+                <p class="progress-story">每一步都是新的开始，每一站都有新的故事...</p>
+            </div>
+            <div class="poi-list" id="poiList">
+                <!-- 景点列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </aside>
+
+    <!-- 地图容器 -->
+    <div id="map" class="map-container"></div>
+
+    <div class="route-overview" id="routeOverview">
+        <div class="overview-title">
+            <h2>选择你的征程起点</h2>
+            <p>每一段路，都有未知的风景和动人的传奇</p>
+        </div>
+        <div class="overview-cards-container">
+            <div class="overview-card" data-segment="east">
+                <div class="card-bg" style="background-image: url('zhaopian/上海外滩/1.png');"></div>
+                <div class="card-content">
+                    <h3>东段：江南水乡</h3>
+                    <p>从繁华都市到烟雨江南</p>
+                    <button class="card-btn">探索此段</button>
+                </div>
+            </div>
+            <div class="overview-card" data-segment="middle">
+                <div class="card-bg" style="background-image: url('zhaopian/山峡大坝/a42b3745-d278-418e-81a8-5aa8567fe3ae.png');"></div>
+                <div class="card-content">
+                    <h3>中段：巴山蜀水</h3>
+                    <p>从荆楚大地到天府之国</p>
+                    <button class="card-btn">探索此段</button>
+                </div>
+            </div>
+            <div class="overview-card" data-segment="west">
+                <div class="card-bg" style="background-image: url('zhaopian/稻城亚丁/1.png');"></div>
+                <div class="card-content">
+                    <h3>西段：雪域天路</h3>
+                    <p>从盆地之心到世界屋脊</p>
+                    <button class="card-btn">探索此段</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 景点详情弹窗 -->
+    <div class="poi-modal" id="poiModal">
+        <div class="poi-modal-content">
+            <span class="poi-modal-close" id="modalClose">&times;</span>
+            <div class="poi-modal-header">
+                <h2 id="modalTitle"></h2>
+                <div class="poi-modal-meta">
+                    <span class="poi-type" id="modalType"></span>
+                    <span class="poi-distance" id="modalDistance"></span>
+                </div>
+            </div>
+            <div class="poi-modal-body">
+                <div class="poi-images" id="modalImages">
+                    <!-- 图片轮播 -->
+                </div>
+                <div class="poi-description" id="modalDescription">
+                    <!-- 景点描述 -->
+                </div>
+                <div class="poi-story" id="modalStory">
+                    <!-- 景点故事 -->
+                </div>
+                <div class="poi-tips" id="modalTips">
+                    <!-- 旅游贴士 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 318故事弹窗 -->
+    <div class="story-modal" id="storyModal">
+        <div class="story-modal-content">
+            <span class="story-modal-close" id="storyModalClose">&times;</span>
+            <div class="story-modal-header">
+                <h2><i class="fas fa-book-open"></i> 318国道传奇</h2>
+                <p class="story-subtitle">一条路，一个传奇，一生的梦想</p>
+            </div>
+            <div class="story-modal-body" id="storyModalBody">
+                <!-- 故事内容将通过JavaScript加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 控制面板 -->
+    <div class="control-panel">
+        <button class="control-btn" id="routeBtn" title="显示/隐藏路线">
+            <i class="fas fa-route"></i>
+        </button>
+        <button class="control-btn" id="layerBtn" title="切换图层">
+            <i class="fas fa-layer-group"></i>
+        </button>
+        <button class="control-btn" id="storyBtn" title="318故事">
+            <i class="fas fa-book-open"></i>
+        </button>
+        <button class="control-btn" id="fullscreenBtn" title="全屏">
+            <i class="fas fa-expand"></i>
+        </button>
+        <button class="control-btn" id="infoBtn" title="关于">
+            <i class="fas fa-info"></i>
+        </button>
+    </div>
+
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>正在加载最美中国318公路游览...</p>
+        <p class="loading-story">每一次加载，都是新征程的开始...</p>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- 主要脚本 -->
+    <script src="js/data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
